@@ -1,0 +1,21 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <CheckBoxPreference
+        android:key="enable"
+        android:title="@string/pref_title_enable"
+        android:summary="@string/pref_description_enable"
+        android:defaultValue="false" />
+
+    <SwitchPreference
+        android:key="show_button"
+        android:title="@string/pref_show_button"
+        android:summary="@string/pref_description_show_button"
+        android:defaultValue="false" />
+
+    <SwitchPreference
+        android:key="show_menu"
+        android:title="@string/pref_show_menu"
+        android:summary="@string/pref_description_show_menu"
+        android:defaultValue="false" />
+
+</PreferenceScreen>

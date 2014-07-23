@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">XCallRecorder</string>
+    <string name="app_name">TWCallRecorder</string>
+    <string name="reboot">Reboot</string>
+    <string name="soft_reboot">Soft Reboot</string>
+    <string name="updated_notification_title">Call Recording Setting Changed</string>
+    <string name="updated_notification">Reboot required</string>
 </resources>

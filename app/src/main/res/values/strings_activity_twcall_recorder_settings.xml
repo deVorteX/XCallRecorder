@@ -1,0 +1,16 @@
+<resources>
+        <string name="title_activity_twcall_recorder_settings">Call Recorder Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+
+    <string name="pref_title_enable">Enable call recording</string>
+    <string name="pref_description_enable">Activates this mod to enable call recording</string>
+    <string name="pref_show_button">Show Call Record Button</string>
+    <string name="pref_description_show_button">Replace add call button with recording button</string>
+    <string name="pref_show_menu">Enable call recording in menu</string>
+    <string name="pref_description_show_menu">Show call recording option in menu while in a call</string>
+
+</resources>
