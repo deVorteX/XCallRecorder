@@ -1,7 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">TWCallRecorder</string>
     <string name="reboot">Reboot</string>
     <string name="soft_reboot">Soft Reboot</string>
     <string name="updated_notification_title">Call Recording Setting Changed</string>
     <string name="updated_notification">Reboot required</string>
+    <string name="title_activity_twcall_recorder">TWCallRecorderActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
 </resources>
