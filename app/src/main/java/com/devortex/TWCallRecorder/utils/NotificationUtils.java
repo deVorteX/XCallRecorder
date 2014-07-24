@@ -21,56 +21,48 @@ import static com.devortex.TWCallRecorder.R.string.updated_notification_title;
 /**
  * Created by patrick on 7/24/2014.
  */
-public class NotificationUtils {
-    protected static Context sContext;
+public final class NotificationUtils {
+    private static Context sContext;
     private static NotificationManager sNotificationManager;
 
     private static final int PENDING_INTENT_SOFT_REBOOT = 2;
     private static final int PENDING_INTENT_REBOOT = 3;
 
-    public NotificationUtils() {
+    public static void init() {
         sContext = TWCallRecorderActivity.getInstance();
+        sNotificationManager = (NotificationManager) sContext.getSystemService(sContext.NOTIFICATION_SERVICE);
     }
 
-    public void notifyRestart() {
-        Intent intent = new Intent(sContext, RebootReceiver.class);
-        PendingIntent pIntent = PendingIntent.getActivity(sContext, 0, intent, 0);
-
+    public static void notifyRestart() {
         String title = sContext.getString(R.string.updated_notification_title);
         String text = sContext.getString(R.string.updated_notification);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(sContext)
                 .setContentTitle(title)
                 .setContentText(text)
+                .setTicker(title)
                 .setSmallIcon(R.drawable.ic_launcher)
-                .setContentIntent(pIntent)
                 .setAutoCancel(true);
 
         Intent iSoftReboot = new Intent(sContext, RebootReceiver.class);
         iSoftReboot.putExtra(RebootReceiver.EXTRA_SOFT_REBOOT, true);
+        iSoftReboot.setAction("com.devortex.TWCallRecorder.REBOOT");
         PendingIntent pSoftReboot = PendingIntent.getBroadcast(sContext, PENDING_INTENT_SOFT_REBOOT,
                 iSoftReboot, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent iReboot = new Intent(sContext, RebootReceiver.class);
+        iReboot.setAction("com.devortex.TWCallRecorder.REBOOT");
         PendingIntent pReboot = PendingIntent.getBroadcast(sContext, PENDING_INTENT_REBOOT,
                 iReboot, PendingIntent.FLAG_UPDATE_CURRENT);
 
         builder.addAction(0, sContext.getString(R.string.reboot), pReboot);
         builder.addAction(0, sContext.getString(R.string.soft_reboot), pSoftReboot);
 
-        sNotificationManager =
-                (NotificationManager) sContext.getSystemService(sContext.NOTIFICATION_SERVICE);
-
         sNotificationManager.notify(0, builder.build());
-    }
-
-    public static void cancelAll() {
-        sNotificationManager.cancelAll();
     }
 
     public static class RebootReceiver extends BroadcastReceiver {
         public static String EXTRA_SOFT_REBOOT = "soft";
-        public static String EXTRA_ACTIVATE_MODULE = "activate_module";
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -81,8 +73,7 @@ public class NotificationUtils {
 			 *  the SU dialog will be prompted behind the expanded notification
 			 *  panel and is therefore not visible to the user.
 			 */
-            sContext.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
-            cancelAll();
+            context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
 
             RootUtil rootUtil = new RootUtil();
             if (!rootUtil.startShell()) {

@@ -33,6 +33,7 @@ public class TWCallRecorderActivity extends Activity {
                     .commit();
         }
         mInstance = this;
+        NotificationUtils.init();
     }
 
 
@@ -59,8 +60,7 @@ public class TWCallRecorderActivity extends Activity {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-            NotificationUtils nu = new NotificationUtils();
-            nu.notifyRestart();
+            NotificationUtils.notifyRestart();
         }
     }
 
