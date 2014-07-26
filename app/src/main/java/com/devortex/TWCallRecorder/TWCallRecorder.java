@@ -26,27 +26,20 @@ public class TWCallRecorder implements IXposedHookZygoteInit, IXposedHookLoadPac
             return;
 
         final boolean enabled = prefs.getBoolean("enable", false);
-        if (loadPackageParam.packageName.equals("com.android.incallui")) {
-            findAndHookMethod("com.android.services.telephony.common.PhoneFeature", loadPackageParam.classLoader, "makeFeatureForCommon", new XC_MethodHook() {
-
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    doMod(loadPackageParam, enabled);
-                }
-            });
-        } else if (loadPackageParam.packageName.equals("com.android.phone")) {
-            findAndHookMethod("com.android.phone.PhoneFeature", loadPackageParam.classLoader, "makeFeatureForCommon", new XC_MethodHook() {
-
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    doMod(loadPackageParam, enabled);
-                }
-            });
+        String featureClass = "com.android.services.telephony.common.PhoneFeature";
+        if (loadPackageParam.packageName.equals("com.android.phone")) {
+            featureClass = "com.android.phone.PhoneFeature";
         }
+        findAndHookMethod(featureClass, loadPackageParam.classLoader, "makeFeatureForCommon", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                doMod(loadPackageParam, enabled, "com.android.phone.PhoneFeature");
+            }
+        });
     }
 
-    private void doMod(LoadPackageParam loadPackageParam, boolean enabled) {
-        Class<?> phoneFeature = XposedHelpers.findClass("com.android.services.telephony.common.PhoneFeature", loadPackageParam.classLoader);
+    private void doMod(LoadPackageParam loadPackageParam, boolean enabled, String featureClass) {
+        Class<?> phoneFeature = XposedHelpers.findClass(featureClass, loadPackageParam.classLoader);
         HashMap<String, Boolean> mFeatureList = (HashMap<String, Boolean>) XposedHelpers.getStaticObjectField(phoneFeature, "mFeatureList");
         if (mFeatureList != null) {
             mFeatureList.put("voice_call_recording", enabled && prefs.getBoolean("show_button", false));
