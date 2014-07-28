@@ -25,27 +25,26 @@ public class TWCallRecorder implements IXposedHookZygoteInit, IXposedHookLoadPac
         if (!loadPackageParam.packageName.equals("com.android.incallui") && !loadPackageParam.packageName.equals("com.android.phone"))
             return;
 
-        final boolean enabled = prefs.getBoolean("enable", false);
-        String featureClass = "com.android.services.telephony.common.PhoneFeature";
-        if (loadPackageParam.packageName.equals("com.android.phone")) {
-            featureClass = "com.android.phone.PhoneFeature";
-        }
-        findAndHookMethod(featureClass, loadPackageParam.classLoader, "makeFeatureForCommon", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                doMod(loadPackageParam, enabled, "com.android.phone.PhoneFeature");
+        if (prefs.getBoolean("enable", false)) {
+            String featureClass = "com.android.services.telephony.common.PhoneFeature";
+            if (loadPackageParam.packageName.equals("com.android.phone")) {
+                featureClass = "com.android.phone.PhoneFeature";
             }
-        });
+            findAndHookMethod(featureClass, loadPackageParam.classLoader, "hasFeature", String.class, new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    doMod(param);
+                }
+            });
+        }
     }
 
-    private void doMod(LoadPackageParam loadPackageParam, boolean enabled, String featureClass) {
-        Class<?> phoneFeature = XposedHelpers.findClass(featureClass, loadPackageParam.classLoader);
-        HashMap<String, Boolean> mFeatureList = (HashMap<String, Boolean>) XposedHelpers.getStaticObjectField(phoneFeature, "mFeatureList");
-        if (mFeatureList != null) {
-            mFeatureList.put("voice_call_recording", enabled && prefs.getBoolean("show_button", false));
-            mFeatureList.put("voice_call_recording_menu", enabled && prefs.getBoolean("show_menu", false));
-        } else {
-            XposedBridge.log("TWCallRecorder: param is null");
+    private void doMod(XC_MethodHook.MethodHookParam param) {
+        if ("voice_call_recording".equals(param.args[0]) && prefs.getBoolean("show_button", false)) {
+            param.setResult(Boolean.TRUE);
+        }
+        if ("voice_call_recording_menu".equals(param.args[0]) && prefs.getBoolean("show_menu", false)) {
+            param.setResult(Boolean.TRUE);
         }
     }
 
